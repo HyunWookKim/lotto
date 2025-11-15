@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>로또 번호 생성기</title>
     <style>
-        /* 기본 스타일 (CSS) */
+        /* CSS 스타일은 이전과 동일합니다. */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
@@ -88,7 +88,7 @@
     </div>
 
     <script>
-        // 로또 번호 생성 로직 (JavaScript)
+        // --- 이 스크립트 부분이 수정되었습니다 ---
         document.getElementById('generate-btn').addEventListener('click', function() {
             const count = document.getElementById('count').value;
             const resultsContainer = document.getElementById('lotto-results');
@@ -96,30 +96,52 @@
             // 이전 결과 지우기
             resultsContainer.innerHTML = '';
 
-            for (let i = 0; i < count; i++) {
-                // 1. 6개의 고유한 번호 생성
+            // [추가된 로직 1] 생성된 '줄' 자체의 중복을 막기 위한 Set
+            const uniqueLines = new Set();
+
+            // [추가된 로직 2] for문 대신 while문 사용
+            // uniqueLines Set의 크기가 사용자가 요청한 'count'보다 작을 동안 계속 반복
+            while (uniqueLines.size < count) {
+                
+                // 1. (기존 로직) 6개의 고유한 번호 생성 (한 줄 내의 중복 방지)
                 const numbers = new Set();
                 while (numbers.size < 6) {
                     const randomNum = Math.floor(Math.random() * 45) + 1;
                     numbers.add(randomNum);
                 }
 
-                // 2. 번호를 오름차순으로 정렬
+                // 2. (기존 로직) 번호를 오름차순으로 정렬
                 const sortedNumbers = Array.from(numbers).sort((a, b) => a - b);
                 
-                // 3. 화면에 표시
-                const lottoSetDiv = document.createElement('div');
-                lottoSetDiv.className = 'lotto-set';
+                // [추가된 로직 3] 정렬된 번호 배열을 고유한 '키' (문자열)로 변환
+                // 예: "1, 10, 15, 20, 25, 30"
+                const lineKey = sortedNumbers.join(', ');
+
+                // [추가된 로직 4] 이 '키'가 Set에 없는지 확인 (줄 간의 중복 방지)
+                if (!uniqueLines.has(lineKey)) {
+                    
+                    // Set에 없으면 (중복이 아니면) Set에 키를 추가
+                    uniqueLines.add(lineKey);
+                    
+                    // 3. (기존 로직) 화면에 표시
+                    const lottoSetDiv = document.createElement('div');
+                    lottoSetDiv.className = 'lotto-set';
+                    
+                    const emojiSpan = document.createElement('span');
+                    emojiSpan.textContent = '🎟️'; // 티켓 이모지
+
+                    const numbersSpan = document.createElement('span');
+                    // 'lineKey' 변수를 바로 텍스트로 사용
+                    numbersSpan.textContent = lineKey; 
+
+                    lottoSetDiv.appendChild(emojiSpan);
+                    lottoSetDiv.appendChild(numbersSpan);
+                    resultsContainer.appendChild(lottoSetDiv);
+                }
                 
-                const emojiSpan = document.createElement('span');
-                emojiSpan.textContent = '🎟️'; // 티켓 이모지
-
-                const numbersSpan = document.createElement('span');
-                numbersSpan.textContent = sortedNumbers.join(', ');
-
-                lottoSetDiv.appendChild(emojiSpan);
-                lottoSetDiv.appendChild(numbersSpan);
-                resultsContainer.appendChild(lottoSetDiv);
+                // 만약 lineKey가 uniqueLines Set에 이미 있다면 (중복 조합이라면)
+                // if문 내부 코드가 실행되지 않고,
+                // uniqueLines.size가 늘어나지 않았으므로 while문이 다시 실행됩니다.
             }
         });
     </script>

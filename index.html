@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로또 번호 생성기</title>
+    <style>
+        /* 기본 스타일 (CSS) */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f4f7f6;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h1 {
+            color: #333;
+            margin-top: 0;
+        }
+        .controls {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        input[type="number"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #lotto-results {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .lotto-set {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .lotto-set span {
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🍀 로또 번호 생성기</h1>
+        <div class="controls">
+            <input type="number" id="count" value="5" min="1" max="100" aria-label="생성할 개수">
+            <button id="generate-btn">생성하기</button>
+        </div>
+        <div id="lotto-results">
+            </div>
+    </div>
+
+    <script>
+        // 로또 번호 생성 로직 (JavaScript)
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const count = document.getElementById('count').value;
+            const resultsContainer = document.getElementById('lotto-results');
+            
+            // 이전 결과 지우기
+            resultsContainer.innerHTML = '';
+
+            for (let i = 0; i < count; i++) {
+                // 1. 6개의 고유한 번호 생성
+                const numbers = new Set();
+                while (numbers.size < 6) {
+                    const randomNum = Math.floor(Math.random() * 45) + 1;
+                    numbers.add(randomNum);
+                }
+
+                // 2. 번호를 오름차순으로 정렬
+                const sortedNumbers = Array.from(numbers).sort((a, b) => a - b);
+                
+                // 3. 화면에 표시
+                const lottoSetDiv = document.createElement('div');
+                lottoSetDiv.className = 'lotto-set';
+                
+                const emojiSpan = document.createElement('span');
+                emojiSpan.textContent = '🎟️'; // 티켓 이모지
+
+                const numbersSpan = document.createElement('span');
+                numbersSpan.textContent = sortedNumbers.join(', ');
+
+                lottoSetDiv.appendChild(emojiSpan);
+                lottoSetDiv.appendChild(numbersSpan);
+                resultsContainer.appendChild(lottoSetDiv);
+            }
+        });
+    </script>
+
+</body>
+</html>
